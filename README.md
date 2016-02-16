@@ -49,6 +49,8 @@ Below is an example of a configuration file.
    </analyze>
    <recursive>yes</recursive>
    <outputter>XML</outputter>
+   <outputfile>myouput.xml</outputfile>
+   <stylesheer>ccm.xsl</stylesheet>
    <suppressMethodSignatures>yes</suppressMethodSignatures>
    <switchStatementBehavior>IgnoreCases</switchStatementBehavior>
    <numMetrics>30</numMetrics>
@@ -62,6 +64,8 @@ Below is an example of a configuration file.
 * ```<analyze>``` element specified which folders to analyze. All paths in the ```<folder>``` element is relative to the location of the configuration file.
 * ```<recursive>``` element tells CCM to traverse folders or not.
 * ```<outputter>``` element tells CCM how to output the data. Valid values are 'XML', 'Tabbed', 'Text', 'CSV'
+* ```<outputfile>``` element tells CCM where to write its output
+* ```<stylesheet>``` element tells CCM the name of the XSL stylesheet to use when viewing XML
 * ```<suppressMethodSignatures>``` set to 'yes' and CCM will only print the name of the method and not the full signature.
 * ```<switchStatementBehavior>``` set to 'IgnoreCases' and CCM will not count each case statement in switch blocks as a branching point.
 * ```<numMetrics>``` tells CCM how many metrics that should be reported. Only the top x functions will be reported.
