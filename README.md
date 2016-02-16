@@ -2,6 +2,15 @@ CCM (Forked from https://github.com/jonasblunck/ccm)
 
 This is a fork of the excellent CCM by JonasBlunck, where possible we will send pull request back into ccm.
 
+The below ReadMe.md is from Jonas orignal work, I will outline the relative minimal changes may on this fork
+
+=== Fork ChangeLog
+
+Support for ```<outputfile>``` in configuration to direct the output directly to a file
+Support for ```<stylesheet>``` in configuration to add an XSL style sheet to the the xml output
+10+% speed increase in the parsing of the source code files by cached GetLineNumber calls
+Travis and AppVeyour support for Windows and Linux (Mono) builds of CCM via CI platforms
+
 ===
 <a href="https://ci.appveyor.com/project/mydeveloperday/ccm">
   <img alt="AppVeyor Build Status"
