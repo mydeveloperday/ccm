@@ -1,23 +1,23 @@
-﻿using System;
+﻿using CCMEngine;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using CCMEngine;
 
 namespace CCM
 {
   class CSVOutputter : CCMOutputter
   {
-    public override void Output(List<ccMetric> metrics, List<ErrorInfo> errors, bool verbose)
+    public override void Output(TextWriter Stream, List<ccMetric> metrics, List<ErrorInfo> errors, bool verbose)
     {
       if (metrics.Count() > 0)
       {
-        Console.WriteLine("Method name,Complexity,Category,Filename,Start line,End line,SLoC");
+        Stream.WriteLine("Method name,Complexity,Testability,Category,Filename,Start line,End line,SLoC");
 
         metrics.ForEach(m =>
           {
-            Console.WriteLine("\"{0}\",{1},{2},{3},{4},{5},{6}",
-              m.Unit, m.CCM, m.Classification, m.Filename, m.StartLineNumber, m.EndLineNumber,
+            Stream.WriteLine("\"{0}\",{1},{2},{3},{4},{5},{6},{7}",
+              m.Unit, m.CCM, m.Testability, m.Classification, m.Filename, m.StartLineNumber, m.EndLineNumber,
               (m.EndLineNumber - m.StartLineNumber));
           }
         );

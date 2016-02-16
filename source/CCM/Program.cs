@@ -24,13 +24,15 @@ namespace CCM
         "Supported languages are c/c++ (.c, .cpp, .h, .hpp), c# (.cs) and javascript (.js)\r\n"+
         "\r\n\r\nUsage:\r\n" +
         "  ccm [config-file] \r\n" +
-        "  ccm [path-to-analyze] [/xml] [/v] [/ignorecases]\r\n\r\n" +
+        "  ccm [path-to-analyze] [/xml] [/tabbedoutput] [/csv] [/v] [/ignorecases]\r\n\r\n" +
         "    config-file        Path to configuration file (see below for structure of file).\r\n"+
         "                       Using a configuration file provides more control, such as analyzing multiple folders,\r\n"+
-        "                       excluding folders and files and controlling number of metrics outputted.\r\n"+                     
+        "                       excluding folders and files and controlling number of metrics outputted.\r\n"+
         "    path-to-analyze    Provide a path to source code for analysis.\r\n" +
         "                       This will be analyzed recursively and 30 worst metrics outputted.\r\n" +
         "    xml                Add /xml if you want output in xml.\r\n" +
+        "    tabbedoutput       Add /xml if you want output in tabbed text format.\r\n" +
+        "    csv                Add /csv if you want output in CSV format.\r\n" +
         "    v                  Add /v if you want ccm-version to be printed to console.\r\n" +
         "    ignorecases        Don't count each case in a switch as additional branch.\r\n" +
         " \r\n" +
@@ -58,18 +60,24 @@ namespace CCM
       Console.WriteLine(usage);
     }
 
-    static CCMOutputter OutputterFactory(string outputType)
+    static CCMOutputter OutputterFactory(string outputType,string style)
     {
-      if (outputType.Equals(CCMOutputter.TabbedOutputType, StringComparison.OrdinalIgnoreCase))
-        return new TabbedOutputter();
+        if (outputType.Equals(CCMOutputter.TabbedOutputType, StringComparison.OrdinalIgnoreCase))
+        {
+            return new TabbedOutputter();
+        }
 
-      if (outputType.Equals(CCMOutputter.XmlOutputType, StringComparison.OrdinalIgnoreCase))
-        return new XmlOutputter();
+        if (outputType.Equals(CCMOutputter.XmlOutputType, StringComparison.OrdinalIgnoreCase))
+        {
+            return new XmlOutputter(style);
+        }
 
-      if (outputType.Equals(CCMOutputter.CSVOutputType, StringComparison.OrdinalIgnoreCase))
-        return new CSVOutputter();
+        if (outputType.Equals(CCMOutputter.CSVOutputType, StringComparison.OrdinalIgnoreCase))
+        {
+            return new CSVOutputter();
+        }
 
-      return new ConsoleOutputter();
+        return new ConsoleOutputter();
     }
 
     public static XmlDocument CreateConfigurationFromArgs(string[] args)
@@ -82,17 +90,29 @@ namespace CCM
       foreach (string arg in args)
       {
         if (arg.Equals("/xml"))
-          sb.Append(string.Format("<outputter>{0}</outputter>", CCMOutputter.XmlOutputType));
+        {
+            sb.Append(string.Format("<outputter>{0}</outputter>", CCMOutputter.XmlOutputType));
+        }
         else if (arg.Equals("/tabbedoutput", StringComparison.OrdinalIgnoreCase))
-          sb.Append(string.Format("<outputter>{0}</outputter>", CCMOutputter.TabbedOutputType));
+        {
+            sb.Append(string.Format("<outputter>{0}</outputter>", CCMOutputter.TabbedOutputType));
+        }
+        else if (arg.Equals("/csv", StringComparison.OrdinalIgnoreCase))
+        {
+            sb.Append(string.Format("<outputter>{0}</outputter>", CCMOutputter.CSVOutputType));
+        }
 
         if (arg.Equals("/ignorecases"))
-          sb.Append("<switchStatementBehavior>IgnoreCases</switchStatementBehavior>");
+        {
+            sb.Append("<switchStatementBehavior>IgnoreCases</switchStatementBehavior>");
+        }
 
         if (arg.Equals("/version") || arg.Equals("/v"))
-          Console.WriteLine("ccm version is: {0}.", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+        {
+            Console.WriteLine("ccm version is: {0}.", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+        }
       }
-        
+
       sb.Append("</ccm>");
 
       XmlDocument doc = new XmlDocument();
@@ -107,9 +127,7 @@ namespace CCM
 
       if (File.Exists(args[0]))
       {
-        //
         // set current path to the location of the configuration file
-        //
         string configurationFile = Path.GetFullPath(args[0]);
         string filename = Path.GetFileName(configurationFile);
         string path = configurationFile.Substring(0, configurationFile.Length - filename.Length);
@@ -131,14 +149,23 @@ namespace CCM
       try
       {
         Program.ValidateArgs(args);
-      
+
         XmlDocument doc = Program.LoadConfiguration(args);
         ConfigurationFile config = new ConfigurationFile(doc);
 
         Driver driver = new Driver(config);
         driver.Drive();
 
-        OutputterFactory(config.OutputType).Output(driver.Metrics, driver.Errors, true);
+        if (config.IsOutputFile)
+        {
+            using (StreamWriter sr = new StreamWriter(config.OutputFile))
+            {
+                OutputterFactory(config.OutputType,config.XmlStyleSheet).Output(sr,driver.Metrics, driver.Errors, true);
+            }
+        }
+        else {
+            OutputterFactory(config.OutputType,config.XmlStyleSheet).Output(System.Console.Out,driver.Metrics, driver.Errors, true);
+        }
       }
       catch (Exception e)
       {

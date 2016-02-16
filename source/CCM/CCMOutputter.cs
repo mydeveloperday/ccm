@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using CCMEngine;
+using System.IO;
 
 namespace CCM
 {
@@ -12,6 +13,6 @@ namespace CCM
     public static string TabbedOutputType = "Tabbed";
     public static string CSVOutputType = "CSV";
 
-    public abstract void Output(List<ccMetric> metrics, List<ErrorInfo> errors, bool verbose);
+    public abstract void Output(TextWriter sr,List<ccMetric> metrics, List<ErrorInfo> errors, bool verbose);
   }
 }

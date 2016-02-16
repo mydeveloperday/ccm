@@ -165,7 +165,7 @@ namespace vsCCM
     {
       foreach (ccMetric metric in metrics)
       {
-        ListViewItem lvi = new ListViewItem(ccMetric.GetClassification(metric.CCM));
+        ListViewItem lvi = new ListViewItem(ccMetric.GetTestability(metric.CCM)+", "+ccMetric.GetClassification(metric.CCM));
         lvi.SubItems.Add(metric.Unit);
         lvi.SubItems.Add(metric.CCM.ToString());
 

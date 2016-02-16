@@ -13,11 +13,11 @@ namespace CCMEngine
     public int StartLineNumber { get; set; }
     public int EndLineNumber { get; set; }
 
-    public static string GetClassification(int ccm)
+    public static string GetTestability(int ccm)
     {
         if (ccm >= 51)
         {
-            return "highly complex";
+            return "untestable";
         }
         if (ccm >= 21)
         {
@@ -25,9 +25,21 @@ namespace CCMEngine
         }
         else if (ccm >= 11)
         {
-            return "moderate";
+            return "more complex";
         }
         return "simple";
+    }
+
+    public static string GetClassification(int ccm)
+    {
+      if (ccm >= 51)
+        return "very high risk";
+      if (ccm >= 21) 
+        return "high risk";
+      else if (ccm >= 11)
+        return "moderate risk";
+      else
+        return "without much risk";
     }
 
     public ccMetric(string filename, string unit, int ccm)
@@ -50,6 +62,14 @@ namespace CCMEngine
       get
       {
         return GetClassification(this.CCM);
+      }
+    }
+
+    public string Testability
+    {
+      get
+      {
+        return GetTestability(this.CCM);
       }
     }
 
