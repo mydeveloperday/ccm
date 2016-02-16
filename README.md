@@ -4,7 +4,7 @@ This is a fork of the excellent CCM by JonasBlunck, where possible we will send 
 
 The below ReadMe.md is from Jonas orignal work, I will outline the relative minimal changes may on this fork
 
-=== Fork ChangeLog
+## Fork ChangeLog
 
 * Support for ```<outputfile>``` in configuration to direct the output directly to a file
 * Support for ```<stylesheet>``` in configuration to add an XSL style sheet to the the xml output
